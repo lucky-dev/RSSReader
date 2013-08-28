@@ -12,4 +12,16 @@
 
 @synthesize idNewsGroup;
 
+- (id)initWithIdGroup:(NSInteger)idGroup
+{
+    self = [super init];
+    
+    if (self)
+    {
+        idNewsGroup = idGroup;
+    }
+    
+    return self;
+}
+
 @end

@@ -10,6 +10,7 @@
 #import "ListNewsViewController.h"
 #import "TypeNews.h"
 #import "Constants.h"
+#import "Task.h"
 
 @implementation ListGroupsNewsViewController
 {
@@ -89,7 +90,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"NewsCell";
+    static NSString *CellIdentifier = @"GroupNewsCell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
     TypeNews *typeNews = mListNews[indexPath.row];
@@ -125,16 +126,16 @@
         TypeNews *typeNews = mListNews[indexPath.row];
         
         listNewsViewController.title = typeNews.title;
-        listNewsViewController.groupNews = typeNews.typeNewsGroup;
+        listNewsViewController.task = [[Task alloc] initWithIdGroup:typeNews.typeNewsGroup];
     }
 }
 
-- (void)onStart
+- (void)onStart:(NSInteger)idGroup
 {
     NSLog(@"DownloaderManager: onStart");
 }
 
-- (void)onStop
+- (void)onStop:(NSInteger)idGroup
 {
     NSLog(@"DownloaderManager: onStop");
 }

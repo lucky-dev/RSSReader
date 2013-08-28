@@ -11,6 +11,6 @@
 
 @interface ListNewsViewController : UITableViewController<DownloaderManagerDelegate>
 
-@property (nonatomic, assign) NSInteger groupNews;
+@property (nonatomic, strong) Task *task;
 
 @end

@@ -36,7 +36,7 @@ static dispatch_once_t predicate;
     
     if (error == nil)
     {
-        NSLog(@"%lu bytes of data was returned.", [data length]);
+        NSLog(@"%lu bytes of data was returned.", (unsigned long)[data length]);
     }
     else
     {

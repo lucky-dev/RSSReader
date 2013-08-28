@@ -10,6 +10,7 @@
 #import "TypeNews.h"
 #import "Task.h"
 #import "Constants.h"
+#import <MBProgressHUD/MBProgressHUD.h>
 
 @interface ListNewsViewController ()
 
@@ -59,13 +60,8 @@
     [mDownloaderManager removeObserver:self];
 }
 - (IBAction)refreshNews:(id)sender
-{
-    Task *task1 = [[Task alloc] init];
-    task1.idNewsGroup = [NSNumber numberWithInt:TYPE_NEWS_TECH];
-    
-    [mDownloaderManager addTask:task1];
-    
-    [mDownloaderManager executeQueue];
+{    
+    [mDownloaderManager executeQueue:self.task];
 }
 
 #pragma mark - Table view data source
@@ -107,14 +103,24 @@
      */
 }
 
-- (void)onStart
+- (void)onStart:(NSInteger)idGroup
 {
     NSLog(@"DownloaderManager: onStart");
+    
+    if (self.task.idNewsGroup == idGroup)
+    {
+        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    }
 }
 
-- (void)onStop
+- (void)onStop:(NSInteger)idGroup
 {
     NSLog(@"DownloaderManager: onStop");
+    
+    if (self.task.idNewsGroup == idGroup)
+    {
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
+    }
 }
 
 - (void)applicationDidEnterBackground

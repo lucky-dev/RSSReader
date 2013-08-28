@@ -10,6 +10,8 @@
 
 @interface Task : NSObject
 
-@property (nonatomic, strong) NSNumber *idNewsGroup;
+@property (nonatomic, assign, readonly) NSInteger idNewsGroup;
+
+- (id)initWithIdGroup:(NSInteger)idGroup;
 
 @end

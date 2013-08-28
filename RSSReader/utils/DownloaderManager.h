@@ -10,8 +10,8 @@
 
 @protocol DownloaderManagerDelegate <NSObject>
 
-- (void)onStart;
-- (void)onStop;
+- (void)onStart:(NSInteger)idGroup;
+- (void)onStop:(NSInteger)idGroup;
 
 @end
 
@@ -21,10 +21,9 @@
 
 + (DownloaderManager*)sharedManager;
 
-- (BOOL)taskExistsWithGroupId:(NSNumber *)taskId;
+- (BOOL)taskExistsWithGroupId:(NSInteger)taskId;
 - (void)addObserver:(id<DownloaderManagerDelegate>)observer;
 - (void)removeObserver:(id<DownloaderManagerDelegate>)observer;
-- (void)addTask:(Task *)task;
-- (void)executeQueue;
+- (void)executeQueue:(Task *)task;
 
 @end

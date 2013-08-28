@@ -16,7 +16,10 @@ static dispatch_once_t predicate;
 
 @interface DownloaderManager ()
 
-- (id) initWithTasks;
+- (id) initCustom;
+- (void)addTask:(Task *)task;
+- (void)notifyOnStart:(NSInteger)idGroup;
+- (void)notifyOnStop:(NSInteger)idGroup;
 
 @property (nonatomic, assign) BOOL isExecute;
 
@@ -33,13 +36,13 @@ static dispatch_once_t predicate;
 + (DownloaderManager *)sharedManager
 {
     dispatch_once(&predicate, ^{
-        sharedDownloaderManager = [[DownloaderManager alloc] initWithTasks];
+        sharedDownloaderManager = [[DownloaderManager alloc] initCustom];
     });
     
     return sharedDownloaderManager;
 }
 
-- (id)initWithTasks
+- (id)initCustom
 {
     self = [super init];
     
@@ -69,20 +72,17 @@ static dispatch_once_t predicate;
 }
 
 - (void)addTask:(Task *)task
-{    
-    if (![self taskExistsWithGroupId:task.idNewsGroup])
-    {
-        [mTasks addObject:task];
-        NSLog(@"Task was added");
-    }
+{
+    [mTasks addObject:task];
+    NSLog(@"Task was added");
 }
 
-- (BOOL)taskExistsWithGroupId:(NSNumber *)taskId
+- (BOOL)taskExistsWithGroupId:(NSInteger)taskId
 {    
     BOOL isExists = false;
     for (Task *item in mTasks)
     {
-        if ([item.idNewsGroup isEqualToNumber:taskId])
+        if (item.idNewsGroup == taskId)
         {
             isExists = true;
             break;
@@ -110,34 +110,38 @@ static dispatch_once_t predicate;
     NSLog(@"Observer was removed: %d", [mObservers count]);
 }
 
-- (void)notifyOnStart
+- (void)notifyOnStart:(NSInteger)idGroup
 {
     for (NSValue *item in mObservers)
     {
         id<DownloaderManagerDelegate> observer = [item nonretainedObjectValue];
-        [observer onStart];
+        [observer onStart:idGroup];
     }
 }
 
-- (void)notifyOnStop
+- (void)notifyOnStop:(NSInteger)idGroup
 {
     for (NSValue *item in mObservers)
     {
         id<DownloaderManagerDelegate> observer = [item nonretainedObjectValue];
-        [observer onStop];
+        [observer onStop:idGroup];
     }
 }
 
-- (void)executeQueue
+- (void)executeQueue:(Task *)task
 {
+    if (![self taskExistsWithGroupId:task.idNewsGroup])
+    {
+        [self addTask:task];
+        [self notifyOnStart:task.idNewsGroup];
+    }
+    
     if (self.isExecute)
     {
         return;
     }
     
     self.isExecute = YES;
-    
-    [self notifyOnStart];
     
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(queue, ^{
@@ -147,7 +151,7 @@ static dispatch_once_t predicate;
         while (count > 0)
         {
             Task *task = [mTasks objectAtIndex:0];
-            NSString *linkNews = [mLinksNews objectForKey:task.idNewsGroup];
+            NSString *linkNews = [mLinksNews objectForKey:[NSNumber numberWithInteger:task.idNewsGroup]];
             
             NSData *data = [mHttpClient execHttpRequest:linkNews];
             
@@ -155,6 +159,7 @@ static dispatch_once_t predicate;
 //            NSLog(@"Data: %@", returnString);
             
             dispatch_sync(dispatch_get_main_queue(), ^{
+                [self notifyOnStop:task.idNewsGroup];
                 [mTasks removeObjectAtIndex:0];
             });
             
@@ -163,7 +168,6 @@ static dispatch_once_t predicate;
         
         //The end
         dispatch_sync(dispatch_get_main_queue(), ^{
-            [self notifyOnStop];
             self.isExecute = NO;
         });
     });
