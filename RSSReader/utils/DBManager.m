@@ -9,6 +9,7 @@
 #import "DBManager.h"
 #import "Tools.h"
 #import "News.h"
+#import "DetailsNews.h"
 #import "GroupNews.h"
 
 static DBManager* sharedDbManager;
@@ -17,8 +18,11 @@ static dispatch_once_t predicate;
 @interface DBManager ()
 
 - (id)initWithCustom;
-- (void)deleteAllObjects:(NSString *)entityDescription;
-- (NSArray *)getAllObjects:(NSString *)entityDescription;
+- (void)deleteAllObjects:(NSString *)entityDescription withPredicate:(NSPredicate *)pred;
+- (NSArray *)getObjects: (NSString *)entityDescription
+          withPredicate: (NSPredicate *)predicate
+      andSortDescriptor: (NSSortDescriptor *)sortDescriptor;
+- (void)removeAllNewsByGroupId:(NSInteger)groupId;
 
 @end
 
@@ -59,7 +63,7 @@ static dispatch_once_t predicate;
     
     NSArray *listNewsGroups = [mainObject objectForKey:@"news_categories"];
     
-    [self deleteAllObjects: @"GroupNews"];
+    [self deleteAllObjects: @"GroupNews" withPredicate:nil];
     
     [listNewsGroups enumerateObjectsUsingBlock: ^(id obj, NSUInteger idx, BOOL *stop) {
         GroupNews *groupNews = [NSEntityDescription
@@ -79,16 +83,9 @@ static dispatch_once_t predicate;
     }];
 }
 
-- (void)deleteAllObjects:(NSString *)entityDescription
+- (void)deleteAllObjects:(NSString *)entityDescription withPredicate:(NSPredicate *)pred
 {
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entity = [NSEntityDescription entityForName: entityDescription
-                                              inManagedObjectContext: mManagedObjectContext];
-    [fetchRequest setEntity:entity];
-    
-    NSError *error;
-    NSArray *items = [mManagedObjectContext executeFetchRequest: fetchRequest
-                                                          error: &error];
+    NSArray *items = [self getObjects:entityDescription withPredicate:pred andSortDescriptor:nil];
     
     for (NSManagedObject *managedObject in items)
     {
@@ -96,18 +93,31 @@ static dispatch_once_t predicate;
         NSLog(@"%@ object deleted", managedObject.description);
     }
     
+    NSError *error;
     if (![mManagedObjectContext save:&error])
     {
         NSLog(@"Error deleting %@ - error:%@", entityDescription, error);
     }
 }
 
-- (NSArray *)getAllObjects:(NSString *)entityDescription
+- (NSArray *)getObjects: (NSString *)entityDescription
+          withPredicate: (NSPredicate *)predicate
+      andSortDescriptor:  (NSSortDescriptor *)sortDescriptor
 {
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName: entityDescription
                                               inManagedObjectContext: mManagedObjectContext];
     [fetchRequest setEntity:entity];
+    
+    if (predicate)
+    {
+        [fetchRequest setPredicate:predicate];
+    }
+    
+    if (sortDescriptor)
+    {
+        [fetchRequest setSortDescriptors:[NSArray arrayWithObject:sortDescriptor]];
+    }
     
     NSError *error;
     NSArray *items = [mManagedObjectContext executeFetchRequest: fetchRequest
@@ -118,37 +128,71 @@ static dispatch_once_t predicate;
 
 - (NSArray *)getAllNewsGroups
 {
-    return [self getAllObjects:@"GroupNews"];
+    NSSortDescriptor *sortByGroupId = [[NSSortDescriptor alloc]
+                                       initWithKey: @"groupId"
+                                         ascending: YES];
+    
+    return [self getObjects:@"GroupNews" withPredicate:nil andSortDescriptor:sortByGroupId];
 }
 
 - (void)removeAllNewsByGroupId:(NSInteger)groupId
-{
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entity = [NSEntityDescription entityForName: @"GroupNews"
-                                              inManagedObjectContext: mManagedObjectContext];
+{    
+    NSPredicate *pred = [NSPredicate predicateWithFormat: @"group.groupId == %@", [NSNumber numberWithInteger:groupId]];
     
-    [fetchRequest setEntity:entity];
+    [self deleteAllObjects:@"News" withPredicate:pred];
+}
+
+- (void)addNewsFromList:(NSArray *)listNews forGroupId:(NSInteger)groupId
+{
+    [self removeAllNewsByGroupId:groupId];
     
     NSPredicate *pred = [NSPredicate predicateWithFormat: @"groupId == %@", [NSNumber numberWithInteger:groupId]];
     
-    [fetchRequest setPredicate:pred];
-    
-    NSError *error;
-    NSArray *items = [mManagedObjectContext executeFetchRequest: fetchRequest
-                                                          error: &error];
+    NSArray *items = [self getObjects:@"GroupNews" withPredicate:pred andSortDescriptor:nil];
     
     GroupNews *groupNews = items[0];
     
-    for (NSManagedObject *item in groupNews.listNews)
+    groupNews.date_last_updated = [NSDate date];
+    
+    for (NSDictionary *dict in listNews)
     {
-        [mManagedObjectContext deleteObject:item];
-        NSLog(@"%@ object deleted", item);
+        News *news = [NSEntityDescription
+                      insertNewObjectForEntityForName: @"News"
+                      inManagedObjectContext: mManagedObjectContext];
+        news.title = [dict objectForKey:@"title"];
+        news.pubDate = [dict objectForKey:@"pubDate"];
+        news.linkImage = [dict objectForKey:@"linkImage"];
+        
+        DetailsNews *detailsNews = [NSEntityDescription
+                      insertNewObjectForEntityForName: @"DetailsNews"
+                      inManagedObjectContext: mManagedObjectContext];
+        detailsNews.fullText = [dict objectForKey:@"fullText"];
+        
+        news.detailsNews = detailsNews;
+        
+        [groupNews addListNewsObject:news];
     }
     
+    NSError *error;
     if (![mManagedObjectContext save:&error])
     {
-        NSLog(@"Error deleting %@ - error:%@", @"GroupNews", error);
+        NSLog(@"Error saving %@ - error:%@", @"GroupNews", error);
     }
+}
+
+- (NSArray *)getAllNewsByGroupId:(NSInteger)groupId
+{
+    NSPredicate *pred = [NSPredicate predicateWithFormat: @"group.groupId == %@", [NSNumber numberWithInteger:groupId]];
+
+    NSSortDescriptor *sortByGroupId = [[NSSortDescriptor alloc]
+                                       initWithKey: @"pubDate"
+                                       ascending: NO];
+    
+    NSArray *items = [self getObjects: @"News"
+                        withPredicate: pred
+                    andSortDescriptor: sortByGroupId];
+    
+    return items;
 }
 
 @end

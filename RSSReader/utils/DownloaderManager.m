@@ -159,26 +159,31 @@ static dispatch_once_t predicate;
             Task *task = [mTasks objectAtIndex:0];
             NSString *linkNews = [mLinksNews objectForKey:[NSNumber numberWithInteger:task.idNewsGroup]];
             
+            BOOL success = NO;
             NSData *data = [mHttpClient execHttpRequest:linkNews];
             
-            NSXMLParser *nsXmlParser = [[NSXMLParser alloc] initWithData:data];
-            self.parser = [[XMLParser alloc] initXMLParser];
-            [nsXmlParser setDelegate:self.parser];
+            if (data)
+            {
+                NSXMLParser *nsXmlParser = [[NSXMLParser alloc] initWithData:data];
+                self.parser = [[XMLParser alloc] initXMLParser];
+                [nsXmlParser setDelegate:self.parser];
             
-            BOOL success = [nsXmlParser parse];
+                success = [nsXmlParser parse];
+            }
             
+            NSArray *listNews = [NSArray array];
             if (success)
             {
-                NSArray *listNews = [self.parser getListNews];
+               listNews = [self.parser getListNews];
                 NSLog(@"News count: %d", [listNews count]);
             }
             
             dispatch_sync(dispatch_get_main_queue(), ^{
-                if ((data) && (success))
+                if (success)
                 {
-                    [mDbManager removeAllNewsByGroupId:task.idNewsGroup];
+                    [mDbManager addNewsFromList:listNews forGroupId:task.idNewsGroup];
                 }
-                    
+                
                 [self notifyOnStop:task.idNewsGroup];
                 [mTasks removeObjectAtIndex:0];
             });

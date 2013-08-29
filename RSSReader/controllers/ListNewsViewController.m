@@ -8,8 +8,13 @@
 
 #import "ListNewsViewController.h"
 #import "Task.h"
+#import "News.h"
 #import "Constants.h"
+#import "DBManager.h"
+#import "NewsCell.h"
+#import "Tools.h"
 #import <MBProgressHUD/MBProgressHUD.h>
+#import <SDWebImage/UIImageView+WebCache.h>
 
 @interface ListNewsViewController ()
 
@@ -18,6 +23,8 @@
 @implementation ListNewsViewController
 {
     DownloaderManager *mDownloaderManager;
+    NSArray *mListNews;
+    DBManager *mDbManager;
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -42,6 +49,8 @@
         
         mDownloaderManager = [DownloaderManager sharedManager];
         [mDownloaderManager addObserver:self];
+        
+        mDbManager = [DBManager sharedManager];
 	}
     
     return self;
@@ -54,6 +63,10 @@
     if ([mDownloaderManager taskExistsWithGroupId:self.task.idNewsGroup])
     {
         [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    }
+    else
+    {
+        mListNews = [mDbManager getAllNewsByGroupId:self.task.idNewsGroup];
     }
 }
 
@@ -72,24 +85,30 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-#warning Potentially incomplete method implementation.
     // Return the number of sections.
-    return 0;
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-#warning Incomplete method implementation.
     // Return the number of rows in the section.
-    return 0;
+    return [mListNews count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"Cell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    static NSString *CellIdentifier = @"NewsCell";
+    NewsCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    
+    News *news = [mListNews objectAtIndex:indexPath.row];
     
     // Configure the cell...
+    cell.titleNews.text = news.title;
+    cell.dateNews.text = [Tools getFormat: @"yyyy-MM-dd HH:mm"
+                                  forDate: news.pubDate];
+    
+    [cell.imageNews setImageWithURL: [NSURL URLWithString:news.linkImage]
+                   placeholderImage: [UIImage imageNamed:@"placeholder.gif"]];
     
     return cell;
 }
@@ -124,6 +143,10 @@
     if (self.task.idNewsGroup == idGroup)
     {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
+        
+        mListNews = [mDbManager getAllNewsByGroupId:self.task.idNewsGroup];
+        
+        [self.tableView reloadData];
     }
 }
 

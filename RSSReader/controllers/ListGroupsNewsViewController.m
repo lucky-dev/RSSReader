@@ -16,7 +16,7 @@
 
 @implementation ListGroupsNewsViewController
 {
-    NSArray *mListNews;
+    NSArray *mListGroups;
     DownloaderManager *mDownloaderManager;
     DBManager *mDbManager;
     NSDate *defaultDate;
@@ -57,7 +57,7 @@
 {
     [super viewDidLoad];
     
-    mListNews = [mDbManager getAllNewsGroups];
+    mListGroups = [mDbManager getAllNewsGroups];
 }
 
 - (void)didReceiveMemoryWarning
@@ -76,7 +76,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [mListNews count];
+    return [mListGroups count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -84,7 +84,7 @@
     static NSString *CellIdentifier = @"GroupNewsCell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
-    GroupNews *groupNews = mListNews[indexPath.row];
+    GroupNews *groupNews = mListGroups[indexPath.row];
     
     // Configure the cell...
     cell.textLabel.text = groupNews.name;
@@ -115,7 +115,7 @@
         
         NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
         
-        GroupNews *typeNews = mListNews[indexPath.row];
+        GroupNews *typeNews = mListGroups[indexPath.row];
         
         listNewsViewController.title = typeNews.name;
         listNewsViewController.task = [[Task alloc] initWithIdGroup:[typeNews.groupId integerValue]];
@@ -130,6 +130,9 @@
 - (void)onStop:(NSInteger)idGroup
 {
     NSLog(@"DownloaderManager: onStop");
+    
+    mListGroups = [mDbManager getAllNewsGroups];
+    [self.tableView reloadData];
 }
 
 - (void)applicationDidEnterBackground

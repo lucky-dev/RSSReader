@@ -13,6 +13,7 @@
 + (DBManager *)sharedManager;
 - (void)populateDbDefaultValues;
 - (NSArray *)getAllNewsGroups;
-- (void)removeAllNewsByGroupId:(NSInteger)groupId;
+- (void)addNewsFromList:(NSArray *)listNews forGroupId:(NSInteger)groupId;
+- (NSArray *)getAllNewsByGroupId:(NSInteger)groupId;
 
 @end
