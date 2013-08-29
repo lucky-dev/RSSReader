@@ -34,6 +34,7 @@
 		E7DEA71117CF65EF001F67E8 /* placeholder@2x.gif in Resources */ = {isa = PBXBuildFile; fileRef = E7DEA70F17CF65EF001F67E8 /* placeholder@2x.gif */; };
 		E7DEA71217CF65EF001F67E8 /* placeholder.gif in Resources */ = {isa = PBXBuildFile; fileRef = E7DEA71017CF65EF001F67E8 /* placeholder.gif */; };
 		E7DEA71417CF6757001F67E8 /* libMBProgressHUD.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E7F67E6217CC8FDA006F3121 /* libMBProgressHUD.a */; };
+		E7DEA71717CF6F1A001F67E8 /* DetailsNewsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E7DEA71617CF6F1A001F67E8 /* DetailsNewsViewController.m */; };
 		E7F3902517C7FEF900C9F4D4 /* ListGroupsNewsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E7F3902417C7FEF900C9F4D4 /* ListGroupsNewsViewController.m */; };
 		E7F3902E17C80B2100C9F4D4 /* ListNewsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E7F3902D17C80B2100C9F4D4 /* ListNewsViewController.m */; };
 /* End PBXBuildFile section */
@@ -106,6 +107,8 @@
 		E7DEA70617CF5D55001F67E8 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		E7DEA70F17CF65EF001F67E8 /* placeholder@2x.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "placeholder@2x.gif"; sourceTree = "<group>"; };
 		E7DEA71017CF65EF001F67E8 /* placeholder.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = placeholder.gif; sourceTree = "<group>"; };
+		E7DEA71517CF6F1A001F67E8 /* DetailsNewsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailsNewsViewController.h; sourceTree = "<group>"; };
+		E7DEA71617CF6F1A001F67E8 /* DetailsNewsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailsNewsViewController.m; sourceTree = "<group>"; };
 		E7F3902317C7FEF900C9F4D4 /* ListGroupsNewsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListGroupsNewsViewController.h; sourceTree = "<group>"; };
 		E7F3902417C7FEF900C9F4D4 /* ListGroupsNewsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListGroupsNewsViewController.m; sourceTree = "<group>"; };
 		E7F3902C17C80B2100C9F4D4 /* ListNewsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListNewsViewController.h; sourceTree = "<group>"; };
@@ -259,6 +262,8 @@
 				E7F3902417C7FEF900C9F4D4 /* ListGroupsNewsViewController.m */,
 				E7F3902C17C80B2100C9F4D4 /* ListNewsViewController.h */,
 				E7F3902D17C80B2100C9F4D4 /* ListNewsViewController.m */,
+				E7DEA71517CF6F1A001F67E8 /* DetailsNewsViewController.h */,
+				E7DEA71617CF6F1A001F67E8 /* DetailsNewsViewController.m */,
 			);
 			path = controllers;
 			sourceTree = "<group>";
@@ -389,6 +394,7 @@
 				E7DEA6F217CF5463001F67E8 /* GroupNews.m in Sources */,
 				E7DEA6F517CF5464001F67E8 /* News.m in Sources */,
 				E7DEA6F817CF5464001F67E8 /* DetailsNews.m in Sources */,
+				E7DEA71717CF6F1A001F67E8 /* DetailsNewsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

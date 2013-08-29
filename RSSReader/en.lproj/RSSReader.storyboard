@@ -47,7 +47,6 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Новости" id="zuU-jP-ZqH"/>
-                    <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="z9a-Xn-ecH" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -62,11 +61,11 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="NewsCell" rowHeight="65" id="cRV-Xv-tKw" customClass="NewsCell">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="NewsCell" rowHeight="65" id="cRV-Xv-tKw" customClass="NewsCell">
                                 <rect key="frame" x="0.0" y="22" width="320" height="65"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                    <rect key="frame" x="0.0" y="0.0" width="320" height="64"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="300" height="64"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Title news" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="wCg-BX-ihl">
@@ -94,6 +93,7 @@
                                     <outlet property="dateNews" destination="3VO-mM-LAj" id="E7J-tA-Ywi"/>
                                     <outlet property="imageNews" destination="HQ0-IL-wEa" id="gRb-o3-q5m"/>
                                     <outlet property="titleNews" destination="wCg-BX-ihl" id="JA2-n1-2Kk"/>
+                                    <segue destination="iln-1j-NNe" kind="push" identifier="OpenDetailsNews" id="TYW-qt-J2Y"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -109,11 +109,51 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
-                    <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hgt-WQ-fhV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="598" y="-252"/>
+        </scene>
+        <!--Details News View Controller-->
+        <scene sceneID="18u-9r-rqX">
+            <objects>
+                <viewController id="iln-1j-NNe" customClass="DetailsNewsViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="hTm-ET-6Es">
+                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Title news" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="IgU-9c-QHk">
+                                <rect key="frame" x="20" y="0.0" width="280" height="68"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <webView contentMode="scaleToFill" id="oW7-Cl-wLJ">
+                                <rect key="frame" x="0.0" y="105" width="320" height="311"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            </webView>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Date" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="gYq-wS-cKM">
+                                <rect key="frame" x="20" y="76" width="280" height="21"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="13"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="hKm-sO-af8"/>
+                    <connections>
+                        <outlet property="detailsNews" destination="oW7-Cl-wLJ" id="gmi-PL-6vN"/>
+                        <outlet property="pubDate" destination="gYq-wS-cKM" id="L2j-DV-f8K"/>
+                        <outlet property="titleNews" destination="IgU-9c-QHk" id="49I-sX-NI5"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Kxp-kK-fk4" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1073" y="-252"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="ecF-E5-VTQ">
@@ -136,6 +176,14 @@
         </scene>
     </scenes>
     <classes>
+        <class className="DetailsNewsViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/DetailsNewsViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="detailsNews" candidateClass="UIWebView"/>
+                <relationship kind="outlet" name="pubDate" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="titleNews" candidateClass="UILabel"/>
+            </relationships>
+        </class>
         <class className="ListGroupsNewsViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ListGroupsNewsViewController.h"/>
         </class>

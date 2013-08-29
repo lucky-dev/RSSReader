@@ -7,6 +7,7 @@
 //
 
 #import "ListNewsViewController.h"
+#import "DetailsNewsViewController.h"
 #import "Task.h"
 #import "News.h"
 #import "Constants.h"
@@ -124,6 +125,18 @@
      // Pass the selected object to the new view controller.
      [self.navigationController pushViewController:detailViewController animated:YES];
      */
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if([segue.identifier isEqualToString: @"OpenDetailsNews"])
+    {
+        DetailsNewsViewController *detailsNewsViewController = segue.destinationViewController;
+        
+        NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
+        
+        detailsNewsViewController.news = mListNews[indexPath.row];
+    }
 }
 
 - (void)onStart:(NSInteger)idGroup
