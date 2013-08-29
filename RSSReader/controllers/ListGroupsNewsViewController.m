@@ -8,14 +8,18 @@
 
 #import "ListGroupsNewsViewController.h"
 #import "ListNewsViewController.h"
-#import "TypeNews.h"
 #import "Constants.h"
 #import "Task.h"
+#import "DBManager.h"
+#import "GroupNews.h"
+#import "Tools.h"
 
 @implementation ListGroupsNewsViewController
 {
     NSArray *mListNews;
     DownloaderManager *mDownloaderManager;
+    DBManager *mDbManager;
+    NSDate *defaultDate;
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -40,6 +44,10 @@
         
         mDownloaderManager = [DownloaderManager sharedManager];
         [mDownloaderManager addObserver:self];
+        
+        mDbManager = [DBManager sharedManager];
+        
+        defaultDate = [Tools getDefaultDate];
     }
     
     return self;
@@ -49,24 +57,7 @@
 {
     [super viewDidLoad];
     
-    mListNews = [[NSArray alloc] initWithObjects:
-                 [[TypeNews alloc] initWithTitle: @"Последние новости"
-                              andTypeOfNewsGroup: TYPE_NEWS_LAST],
-                 [[TypeNews alloc] initWithTitle: @"Украина"
-                              andTypeOfNewsGroup: TYPE_NEWS_UKRAINE],
-                 [[TypeNews alloc] initWithTitle: @"Бизнес"
-                              andTypeOfNewsGroup: TYPE_NEWS_BUSINESS],
-                 [[TypeNews alloc] initWithTitle: @"Мир о нас"
-                              andTypeOfNewsGroup: TYPE_NEWS_WORLD_ABOUT_US],
-                 [[TypeNews alloc] initWithTitle: @"Шоу-биз и культура"
-                              andTypeOfNewsGroup: TYPE_NEWS_SHOWBIZ],
-                 [[TypeNews alloc] initWithTitle: @"Мир"
-                              andTypeOfNewsGroup: TYPE_NEWS_WORLD],
-                 [[TypeNews alloc] initWithTitle: @"Наука и медецина"
-                              andTypeOfNewsGroup: TYPE_NEWS_TECH],
-                 [[TypeNews alloc] initWithTitle: @"Спорт"
-                              andTypeOfNewsGroup: TYPE_NEWS_SPORT],
-                 nil];
+    mListNews = [mDbManager getAllNewsGroups];
 }
 
 - (void)didReceiveMemoryWarning
@@ -93,11 +84,19 @@
     static NSString *CellIdentifier = @"GroupNewsCell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
-    TypeNews *typeNews = mListNews[indexPath.row];
+    GroupNews *groupNews = mListNews[indexPath.row];
     
     // Configure the cell...
-    cell.textLabel.text = typeNews.title;
-    cell.detailTextLabel.text = @"Не обновлено";
+    cell.textLabel.text = groupNews.name;
+    
+    if ([groupNews.date_last_updated isEqualToDate:defaultDate])
+    {
+        cell.detailTextLabel.text = @"Не обновлено";
+    }
+    else
+    {
+        cell.detailTextLabel.text = [Tools getFormat:@"yyyy-MM-dd HH:mm" forDate:groupNews.date_last_updated];
+    }
     
     return cell;
 }
@@ -106,13 +105,6 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     */
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -123,10 +115,10 @@
         
         NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
         
-        TypeNews *typeNews = mListNews[indexPath.row];
+        GroupNews *typeNews = mListNews[indexPath.row];
         
-        listNewsViewController.title = typeNews.title;
-        listNewsViewController.task = [[Task alloc] initWithIdGroup:typeNews.typeNewsGroup];
+        listNewsViewController.title = typeNews.name;
+        listNewsViewController.task = [[Task alloc] initWithIdGroup:[typeNews.groupId integerValue]];
     }
 }
 

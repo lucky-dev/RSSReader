@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="2061" systemVersion="12E55" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="DetailsNews" representedClassName="DetailsNews" syncable="YES">
+        <attribute name="fullText" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="GroupNews" representedClassName="GroupNews" syncable="YES">
+        <attribute name="date_last_updated" attributeType="Date" syncable="YES"/>
+        <attribute name="groupId" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="link" attributeType="String" syncable="YES"/>
+        <attribute name="name" attributeType="String" syncable="YES"/>
+        <relationship name="listNews" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="News" syncable="YES"/>
+    </entity>
+    <entity name="News" representedClassName="News" syncable="YES">
+        <attribute name="linkImage" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="pubDate" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="detailsNews" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="DetailsNews" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="GroupNews" positionX="-8829" positionY="-2250" width="128" height="118"/>
+        <element name="News" positionX="-8649" positionY="-2131" width="128" height="103"/>
+        <element name="DetailsNews" positionX="-8471" positionY="-2020" width="128" height="58"/>
+    </elements>
+</model>

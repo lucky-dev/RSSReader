@@ -7,7 +7,6 @@
 //
 
 #import "ListNewsViewController.h"
-#import "TypeNews.h"
 #import "Task.h"
 #import "Constants.h"
 #import <MBProgressHUD/MBProgressHUD.h>
@@ -51,6 +50,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    if ([mDownloaderManager taskExistsWithGroupId:self.task.idNewsGroup])
+    {
+        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    }
 }
 
 - (void)didReceiveMemoryWarning

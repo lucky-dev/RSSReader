@@ -118,6 +118,7 @@
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ListNewsViewController.h"/>
             <relationships>
                 <relationship kind="action" name="refreshNews:"/>
+                <relationship kind="outlet" name="refreshNews" candidateClass="UIBarButtonItem"/>
             </relationships>
         </class>
     </classes>

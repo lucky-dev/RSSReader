@@ -10,6 +10,8 @@
 #import "Constants.h"
 #import "Task.h"
 #import "HttpClient.h"
+#import "DBManager.h"
+#import "XMLParser.h"
 
 static DownloaderManager* sharedDownloaderManager;
 static dispatch_once_t predicate;
@@ -22,6 +24,7 @@ static dispatch_once_t predicate;
 - (void)notifyOnStop:(NSInteger)idGroup;
 
 @property (nonatomic, assign) BOOL isExecute;
+@property (nonatomic, strong) XMLParser *parser;
 
 @end
 
@@ -31,6 +34,7 @@ static dispatch_once_t predicate;
     NSDictionary *mLinksNews;
     HttpClient *mHttpClient;
     NSMutableArray *mObservers;
+    DBManager *mDbManager;
 }
 
 + (DownloaderManager *)sharedManager
@@ -66,6 +70,8 @@ static dispatch_once_t predicate;
         mHttpClient = [HttpClient sharedManager];
         
         mObservers = [[NSMutableArray alloc] init];
+        
+        mDbManager = [DBManager sharedManager];
     }
     
     return self;
@@ -155,10 +161,24 @@ static dispatch_once_t predicate;
             
             NSData *data = [mHttpClient execHttpRequest:linkNews];
             
-//            NSString *returnString = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
-//            NSLog(@"Data: %@", returnString);
+            NSXMLParser *nsXmlParser = [[NSXMLParser alloc] initWithData:data];
+            self.parser = [[XMLParser alloc] initXMLParser];
+            [nsXmlParser setDelegate:self.parser];
+            
+            BOOL success = [nsXmlParser parse];
+            
+            if (success)
+            {
+                NSArray *listNews = [self.parser getListNews];
+                NSLog(@"News count: %d", [listNews count]);
+            }
             
             dispatch_sync(dispatch_get_main_queue(), ^{
+                if ((data) && (success))
+                {
+                    [mDbManager removeAllNewsByGroupId:task.idNewsGroup];
+                }
+                    
                 [self notifyOnStop:task.idNewsGroup];
                 [mTasks removeObjectAtIndex:0];
             });
