@@ -95,7 +95,8 @@
     }
     else
     {
-        cell.detailTextLabel.text = [Tools getFormat:@"yyyy-MM-dd HH:mm" forDate:groupNews.date_last_updated];
+        cell.detailTextLabel.text = [Tools getFormat: DATE_FORMAT_SIMPLE
+                                             forDate: groupNews.date_last_updated];
     }
     
     return cell;

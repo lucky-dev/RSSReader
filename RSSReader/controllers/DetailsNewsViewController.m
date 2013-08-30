@@ -10,6 +10,7 @@
 #import "News.h"
 #import "DetailsNews.h"
 #import "Tools.h"
+#import "Constants.h"
 
 @interface DetailsNewsViewController ()
 
@@ -23,8 +24,8 @@
 	// Do any additional setup after loading the view.
     
     self.titleNews.text = self.news.title;
-    self.pubDate.text = [Tools getFormat: @"yyyy-MM-dd HH:mm"
-                            forDate: self.news.pubDate];
+    self.pubDate.text = [Tools getFormat: DATE_FORMAT_SIMPLE
+                                 forDate: self.news.pubDate];
     [self.detailsNews loadHTMLString:self.news.detailsNews.fullText baseURL:nil];
 }
 

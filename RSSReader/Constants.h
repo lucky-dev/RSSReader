@@ -27,4 +27,7 @@
 #define LINK_TECH           @"http://k.img.com.ua/rss/ru/tech.xml"
 #define LINK_SPORT          @"http://k.img.com.ua/rss/ru/sport.xml"
 
+#define DATE_FORMAT_PARSER @"EEE', 'dd' 'MMM' 'yyyy' 'HH':'mm':'ss' 'ZZZ"
+#define DATE_FORMAT_SIMPLE @"yyyy'-'MM'-'dd' 'HH':'mm"
+
 #endif

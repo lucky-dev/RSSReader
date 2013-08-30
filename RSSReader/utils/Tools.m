@@ -47,8 +47,14 @@
 
 + (NSString *)getFormat:(NSString *)format forDate:(NSDate *)date
 {
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:format];
+    static NSDateFormatter *formatter = nil;
+    
+    if (!formatter)
+    {
+        formatter = [[NSDateFormatter alloc] init];
+        [formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
+        [formatter setDateFormat:format];
+    }
     
     return [formatter stringFromDate:date];
 }

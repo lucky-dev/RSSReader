@@ -105,7 +105,7 @@
     
     // Configure the cell...
     cell.titleNews.text = news.title;
-    cell.dateNews.text = [Tools getFormat: @"yyyy-MM-dd HH:mm"
+    cell.dateNews.text = [Tools getFormat: DATE_FORMAT_SIMPLE
                                   forDate: news.pubDate];
     
     [cell.imageNews setImageWithURL: [NSURL URLWithString:news.linkImage]

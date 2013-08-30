@@ -8,6 +8,13 @@
 
 #import "XMLParser.h"
 #import "AppDelegate.h"
+#import "Constants.h"
+
+@interface XMLParser ()
+
+- (NSDate *)getDateFromString:(NSString *)dateStr;
+
+@end
 
 @implementation XMLParser
 {
@@ -86,11 +93,7 @@ didStartElement: (NSString *)elementName
         }
         else if ([elementName isEqualToString:@"pubDate"])
         {
-            NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-            [dateFormat setDateFormat:@"EE, d LLLL yyyy HH:mm:ss Z"];
-            NSDate *date = [dateFormat dateFromString:mCurrentElementValue];
-            
-            [mNews setValue: date
+            [mNews setValue: [self getDateFromString:mCurrentElementValue]
                      forKey: @"pubDate"];
         }
         else if ([elementName isEqualToString:@"fulltext"])
@@ -106,6 +109,21 @@ didStartElement: (NSString *)elementName
 - (void)parser:(NSXMLParser *)parser foundCDATA:(NSData *)CDATABlock
 {
     mCurrentElementValue = [[NSMutableString alloc] initWithData:CDATABlock encoding:NSUTF8StringEncoding];
+}
+
+- (NSDate *)getDateFromString:(NSString *)dateStr;
+{
+    static NSDateFormatter *dateFormat = nil;
+    
+    if (!dateFormat)
+    {
+        dateFormat = [[NSDateFormatter alloc] init];
+    }
+    
+    [dateFormat setDateFormat:DATE_FORMAT_PARSER];
+    [dateFormat setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
+    
+    return [dateFormat dateFromString:dateStr];
 }
 
 @end
